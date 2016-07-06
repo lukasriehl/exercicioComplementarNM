@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package modelo;
+package cliente_conta;
 
 /**
  *
  * @author Lukas
  */
-public class Banco {
-    
+public class ClientePremium extends Cliente {
+
 }
