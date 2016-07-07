@@ -19,7 +19,6 @@ public abstract class Funcionario implements Serializable {
     private String nome;
 
     protected Funcionario() {
-
     }
 
     public String getCpf() {

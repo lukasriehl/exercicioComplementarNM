@@ -20,13 +20,13 @@ public abstract class Conta implements Cloneable {
 
     private int numero;
     private String digito;
-    private BigDecimal saldo;    
+    protected BigDecimal saldo;
+    protected BigDecimal saldoChequeEspecial;
     private Agencia agencia;
     private Status status;
     private HashMap<String, BigDecimal> agendamento = new HashMap<>();
 
     protected Conta() {
-
     }
 
     protected Conta(int numero, String digito, BigDecimal saldo, Agencia agencia, Status status) {
@@ -35,7 +35,6 @@ public abstract class Conta implements Cloneable {
         this.digito = digito.length() > 2
                 ? digito.substring(0, 2) : digito;
         this.saldo = saldo;
-        //this.chequeEspecial = chequeEspecial;
         this.agencia = agencia;
         this.status = status;
     }
@@ -44,50 +43,15 @@ public abstract class Conta implements Cloneable {
 
     protected abstract BigDecimal realizaSaque(BigDecimal valorSaque);
 
-//    BigDecimal realizaDeposito(Cliente cliente, BigDecimal valor) {
-//
-//        if (cliente != null) {
-//            Calendar diaAtual = Calendar.getInstance();
-//
-//            //Efetua o agendamento para o próximo dia útil caso o dia atual seja Sábado ou Domingo
-//            if ((diaAtual.get(Calendar.DAY_OF_WEEK) == 1) || (diaAtual.get(Calendar.DAY_OF_WEEK) == 7)) {
-//                String novaDataAgendamento;
-//                int qtdeDias = diaAtual.get(Calendar.DAY_OF_WEEK) == 1 ? 1 : 2;
-//
-//                diaAtual.add(Calendar.DAY_OF_YEAR, qtdeDias);
-//
-//                novaDataAgendamento = String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH)).length() < 2
-//                        ? "0".concat(String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH)))
-//                        : String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH));
-//                novaDataAgendamento = novaDataAgendamento.concat("/").concat(String.valueOf(diaAtual.get(Calendar.MONTH)))
-//                        .concat(String.valueOf(diaAtual.get(Calendar.YEAR)));
-//
-//                agendamento.put(novaDataAgendamento, valor);
-//
-//            } else {
-//                this.saldo = this.saldo.add(valor);
-//            }
-//        }
-//
-//        return this.saldo;
-//    }
-//
-//    BigDecimal realizaSaque(Cliente cliente, BigDecimal valor) {
-//
-//        int comparaSaldoEValor = this.saldo.compareTo(valor);
-//
-//        if ((cliente != null) && (comparaSaldoEValor != -1)) {
-//            this.saldo = this.saldo.subtract(valor);
-//        }
-//
-//        return this.saldo;
-//    }
-    void realizaAgendamento(BigDecimal valor) {
+    protected BigDecimal retornaSaldoTotal() {
+        return this.saldo.add(this.saldoChequeEspecial);
+    }
 
+    void realizaAgendamento(BigDecimal valor) {
         Calendar diaAtual = Calendar.getInstance();
 
         String novaDataAgendamento;
-        int qtdeDias = diaAtual.get(Calendar.DAY_OF_WEEK) == 1 ? 1 : 2;
+        int qtdeDias = diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ? 1 : 2;
 
         diaAtual.add(Calendar.DAY_OF_YEAR, qtdeDias);
 
@@ -98,6 +62,8 @@ public abstract class Conta implements Cloneable {
                 .concat(String.valueOf(diaAtual.get(Calendar.YEAR)));
 
         this.agendamento.put(novaDataAgendamento, valor);
+
+        System.out.println("Agendamento realizado no valor de " + valor.toString() + " p/ o dia " + novaDataAgendamento);
     }
 
     public int getNumero() {

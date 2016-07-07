@@ -9,6 +9,6 @@ package funcionario;
  *
  * @author Lukas
  */
-public class Caixa {
-    
+public class Caixa extends Funcionario {
+
 }

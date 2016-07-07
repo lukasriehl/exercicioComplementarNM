@@ -31,7 +31,8 @@ public class Banco implements Serializable, Cloneable {
         return nome;
     }
 
-    Banco getClone() {
+    @Override
+    public Banco clone() {
         try {
             // call clone in Object.
             return (Banco) super.clone();

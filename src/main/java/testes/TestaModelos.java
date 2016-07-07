@@ -7,6 +7,7 @@ package testes;
 
 import agencia_banco.Agencia;
 import agencia_banco.Banco;
+import cliente_conta.Cliente;
 
 /**
  *

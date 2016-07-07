@@ -5,6 +5,8 @@
  */
 package cliente_conta;
 
+import agencia_banco.Agencia;
+import enumerator.Status;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
@@ -14,35 +16,38 @@ import java.util.Calendar;
  */
 public class ContaPoupanca extends Conta {
 
-    private BigDecimal rendimento = BigDecimal.valueOf(0.0);
+    private BigDecimal rendimento = BigDecimal.ZERO;
+
+    public ContaPoupanca(int numero, String digito, BigDecimal saldo, Agencia agencia, Status status) {
+        super(numero, digito, saldo, agencia, status);
+    }
 
     @Override
     public BigDecimal realizaDeposito(BigDecimal valor) {
-
-        BigDecimal saldoAtualizado;
-
         Calendar diaAtual = Calendar.getInstance();
 
         //Efetua o agendamento para o próximo dia útil caso o dia atual seja Sábado ou Domingo
-        if ((diaAtual.get(Calendar.DAY_OF_WEEK) == 1) || (diaAtual.get(Calendar.DAY_OF_WEEK) == 7)) {
-
-            saldoAtualizado = this.getSaldo();
-
+        if ((diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) || (diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
             realizaAgendamento(valor);
-
         } else {
-            this.rendimento = valor.multiply(BigDecimal.valueOf(1.02));
-            saldoAtualizado = this.getSaldo().add(valor.multiply(BigDecimal.valueOf(1.02)));
+            this.rendimento = this.rendimento.add(valor.multiply(BigDecimal.valueOf(0.02)));
+            this.saldo = this.saldo.add(valor.multiply(BigDecimal.valueOf(1.02)));
         }
-
-        return saldoAtualizado;
+        return this.saldo;
     }
 
     @Override
     public BigDecimal realizaSaque(BigDecimal valor) {
-        int comparaSaldoEValor = this.getSaldo().compareTo(valor);
+        int comparaSaldoEValor = this.saldo.compareTo(valor);
 
-        return comparaSaldoEValor != -1 ? this.getSaldo().subtract(valor) : this.getSaldo();
+        if (comparaSaldoEValor == -1) {
+            System.out.println("Não foi possível efetuar o saque! Saldo abaixo do valor de saque desejado. Saldo atual: " + this.retornaSaldoTotal());
+
+            return this.saldo;
+        } else {
+            this.saldo = this.saldo.subtract(valor);
+        }
+        return this.retornaSaldoTotal();
     }
 
     public BigDecimal getRendimento() {

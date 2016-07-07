@@ -44,10 +44,13 @@ public class Agencia implements Serializable, Cloneable {
         return banco;
     }
 
-    Agencia getClone() {
+    @Override
+    public Agencia clone() {
         try {
             // call clone in Object.
-            return (Agencia) super.clone();
+            Agencia a = (Agencia) super.clone();
+            a.banco = a.banco.clone();
+            return a;
         } catch (CloneNotSupportedException e) {
             System.out.println(" Não é permitido clonar o objeto! ");
             return this;
