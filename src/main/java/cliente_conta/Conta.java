@@ -8,8 +8,6 @@ package cliente_conta;
 import agencia_banco.Agencia;
 import enumerator.Status;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -24,7 +22,6 @@ public abstract class Conta implements Cloneable {
     protected BigDecimal saldoChequeEspecial;
     private Agencia agencia;
     private Status status;
-    private HashMap<String, BigDecimal> agendamento = new HashMap<>();
 
     protected Conta() {
     }
@@ -47,25 +44,6 @@ public abstract class Conta implements Cloneable {
         return this.saldo.add(this.saldoChequeEspecial);
     }
 
-    void realizaAgendamento(BigDecimal valor) {
-        Calendar diaAtual = Calendar.getInstance();
-
-        String novaDataAgendamento;
-        int qtdeDias = diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY ? 1 : 2;
-
-        diaAtual.add(Calendar.DAY_OF_YEAR, qtdeDias);
-
-        novaDataAgendamento = String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH)).length() < 2
-                ? "0".concat(String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH)))
-                : String.valueOf(diaAtual.get(Calendar.DAY_OF_MONTH));
-        novaDataAgendamento = novaDataAgendamento.concat("/").concat(String.valueOf(diaAtual.get(Calendar.MONTH)))
-                .concat(String.valueOf(diaAtual.get(Calendar.YEAR)));
-
-        this.agendamento.put(novaDataAgendamento, valor);
-
-        System.out.println("Agendamento realizado no valor de " + valor.toString() + " p/ o dia " + novaDataAgendamento);
-    }
-
     public int getNumero() {
         return numero;
     }
@@ -82,7 +60,7 @@ public abstract class Conta implements Cloneable {
         return agencia;
     }
 
-    Conta getClone() {
+    public Conta clone() {
         try {
             // call clone in Object.
             return (Conta) super.clone();

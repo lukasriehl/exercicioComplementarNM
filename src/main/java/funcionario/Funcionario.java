@@ -21,6 +21,11 @@ public abstract class Funcionario implements Serializable {
     protected Funcionario() {
     }
 
+    protected Funcionario(String cpf, String nome) {
+        this.cpf = cpf;
+        this.nome = nome;
+    }
+
     public String getCpf() {
         return cpf;
     }

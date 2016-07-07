@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cliente_conta;
+package premium;
 
+import cliente_conta.Cliente;
+import cliente_conta.Conta;
 import enumerator.Status;
 import java.math.BigDecimal;
 

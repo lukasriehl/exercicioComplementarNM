@@ -5,6 +5,8 @@
  */
 package cliente_conta;
 
+import contas_e_operacoes.ContaPoupanca;
+import contas_e_operacoes.ContaCorrente;
 import agencia_banco.Agencia;
 import enumerator.Status;
 import java.io.Serializable;

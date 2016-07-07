@@ -3,16 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package funcionario;
+package enumerator;
 
 /**
  *
  * @author Lukas
  */
-public class Caixa extends Funcionario {
+public enum TipoMovimentacao {
 
-    public Caixa(String cpf, String nome) {
-        super(cpf, nome);
+    CREDITO {
+        public char getCodigo() {
+            return 'C';
+        }
+    },
+    DEBITO {
+        public char getCodigo() {
+            return 'D';
+        }
     }
 
 }

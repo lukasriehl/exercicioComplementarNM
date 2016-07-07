@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cliente_conta;
+package contas_e_operacoes;
 
 import agencia_banco.Agencia;
+import cliente_conta.Conta;
 import enumerator.Status;
 import java.math.BigDecimal;
 import java.util.Calendar;

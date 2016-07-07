@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package funcionario.gerente;
+package contas_e_operacoes;
 
-import cliente_conta.ContaCorrente;
 import funcionario.Funcionario;
 import java.math.BigDecimal;
 
@@ -14,6 +13,10 @@ import java.math.BigDecimal;
  * @author Lukas
  */
 public class Gerente extends Funcionario {
+
+    public Gerente(String cpf, String nome) {
+        super(cpf, nome);
+    }
 
     public void alteraLimiteChequeEspecial(ContaCorrente contaCorrente, BigDecimal novoValor) {
 
