@@ -5,71 +5,30 @@
  */
 package premium;
 
-import agencia_banco.Agencia;
-import cliente_conta.Conta;
-import enumerator.Status;
+import contas_e_operacoes.ContaCorrente;
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 /**
  *
  * @author Lukas
  */
-public class ContaPremium extends Conta {
+public class ContaPremium extends ContaCorrente {
 
-    public ContaPremium(int numero, String digito, BigDecimal saldo, Agencia agencia, Status status) {
-        super(numero, digito, saldo, agencia, status);
-        this.saldoChequeEspecial = new BigDecimal(5000);
-    }
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    public BigDecimal realizaDeposito(BigDecimal valor) {
-        Calendar diaAtual = Calendar.getInstance();
-
-        //Efetua o agendamento para o próximo dia útil caso o dia atual seja Sábado ou Domingo
-        //Não é necessário o teste aqui, deve ser realizada a operação de depósito apenas
-        if ((diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) || (diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
-
-            realizaAgendamento(valor);
-
-        } else if (this.saldoChequeEspecial.compareTo(BigDecimal.ZERO) == -1) {
-            BigDecimal difChequeEspecial;
-            boolean ultrapassouChequeEspecial;
-
-            this.saldoChequeEspecial = this.saldoChequeEspecial.add(valor);
-
-            difChequeEspecial = BigDecimal.ZERO.subtract(this.saldoChequeEspecial);
-
-            ultrapassouChequeEspecial = difChequeEspecial.compareTo(BigDecimal.ZERO) == -1;
-
-            this.saldoChequeEspecial = ultrapassouChequeEspecial ? BigDecimal.ZERO : this.saldoChequeEspecial;
-
-            this.saldo = ultrapassouChequeEspecial ? this.saldo.add(difChequeEspecial.abs())
-                    : this.saldo;
-        } else {
-            this.saldo = this.saldo.add(valor);
-        }
-
-        System.out.println("Depósito realizado! Limite atual: " + this.saldoChequeEspecial.toString());
-        System.out.println("Saldo total(saldo conta-corrente + limite): " + this.retornaSaldoTotal().toString());
-
-        return this.retornaSaldoTotal();
+    ContaPremium(ContaCorrente contaCorrente) {
+        super(contaCorrente.getNumero(), contaCorrente.getDigito(), contaCorrente.getAgencia());
     }
 
     @Override
     public BigDecimal realizaSaque(BigDecimal valor) {
-        BigDecimal difContaCorrente = this.saldo.subtract(valor);
 
-        if (difContaCorrente.compareTo(BigDecimal.ZERO) == -1) {
-            this.saldo = BigDecimal.ZERO;
-            this.saldoChequeEspecial = this.saldoChequeEspecial.subtract(difContaCorrente.abs());
+        if (super.verificaSaldo(valor)) {
+            System.out.println("Impossível realizar o saque! Saldo insuficiente.");
+            return getSaldo();
         } else {
-            this.saldo = this.saldo.subtract(valor);
+            System.out.println("Saque efetuado com sucesso! Saldo atualizado: " + this.getSaldo().toString());
+            return super.realizaSaque(valor);
         }
-
-        System.out.println("Saque efetuado com sucesso! Saldo atualizado: " + this.retornaSaldoTotal().toString());
-
-        return this.retornaSaldoTotal();
     }
-
 }

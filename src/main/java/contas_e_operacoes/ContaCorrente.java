@@ -6,30 +6,24 @@
 package contas_e_operacoes;
 
 import agencia_banco.Agencia;
-import cliente_conta.Conta;
-import enumerator.Status;
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 /**
  *
  * @author Lukas
  */
-public class ContaCorrente extends Conta {
+public class ContaCorrente extends OperacoesConta {
 
-    public ContaCorrente(int numero, String digito, BigDecimal saldo, Agencia agencia, Status status) {
-        super(numero, digito, saldo, agencia, status);
-        this.saldoChequeEspecial = new BigDecimal(5000);
+    private BigDecimal saldoChequeEspecial = new BigDecimal(5000);
+
+    public ContaCorrente(int numero, String digito, Agencia agencia) {
+        super(numero, digito, agencia);
     }
 
     @Override
     public BigDecimal realizaDeposito(BigDecimal valor) {
-        Calendar diaAtual = Calendar.getInstance();
 
-        //Efetua o agendamento para o próximo dia útil caso o dia atual seja Sábado ou Domingo
-        if ((diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) || (diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
-            realizaAgendamento(valor);
-        } else if (this.saldoChequeEspecial.compareTo(BigDecimal.valueOf(5000)) == -1) {
+        if (this.saldoChequeEspecial.compareTo(BigDecimal.valueOf(5000)) == -1) {
             BigDecimal difChequeEspecial;
             boolean ultrapassouChequeEspecial;
 
@@ -55,9 +49,9 @@ public class ContaCorrente extends Conta {
     @Override
     public BigDecimal realizaSaque(BigDecimal valor) {
 
-        BigDecimal saldoAtual = this.retornaSaldoTotal();
+        BigDecimal saldoAtual = this.getSaldo();
 
-        if (saldoAtual.compareTo(valor) == -1) {
+        if (super.verificaSaldo(valor)) {
             System.out.println("Não foi possível efetuar o saque! Saldo abaixo do valor de saque desejado. Saldo atual: " + saldoAtual);
 
             return saldoAtual;
@@ -79,6 +73,11 @@ public class ContaCorrente extends Conta {
 
             return this.retornaSaldoTotal();
         }
+    }
+
+    @Override
+    public BigDecimal getSaldo() {
+        return super.getSaldo().add(saldoChequeEspecial);
     }
 
 }

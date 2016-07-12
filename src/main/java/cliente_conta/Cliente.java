@@ -11,10 +11,12 @@ import agencia_banco.Agencia;
 import enumerator.Status;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -25,7 +27,7 @@ public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
     private String cpf;
     private String nome;
-    private List<Conta> contasList = new ArrayList();
+    private Set<Conta> contas = new LinkedHashSet<>();
 
     public Cliente() {
     }
@@ -35,10 +37,9 @@ public class Cliente implements Serializable {
         this.nome = nome;
     }
 
-    private boolean verificaExistenciaConta(int numero) {
-        for (Conta conta : contasList) {
-            //if ((conta.getAgencia().equals(agencia)) && (conta.getNumero() == numero)) {
-            if (conta.getNumero() == numero) {
+    private boolean verificaExistenciaConta(Agencia agencia, int numero) {
+        for (Conta conta : contas) {
+            if ((conta.getAgencia().equals(agencia)) && (conta.getNumero() == numero)) {
                 return true;
             }
         }
@@ -46,23 +47,21 @@ public class Cliente implements Serializable {
     }
 
     //Adiciona uma conta na lista de contas
-    protected void adicionaConta(Conta conta) {
-        if (verificaExistenciaConta(conta.getNumero())) {
+    protected void adicionaConta(Agencia agencia, Conta conta) {
+        if (verificaExistenciaConta(conta.getAgencia(), conta.getNumero())) {
             System.out.println(" A conta de número " + String.valueOf(conta.getNumero())
-                    + " , dígito " + conta.getDigito() + " da agência " + conta.getAgencia().getNome() + " já existe!");
+                    + " , dígito " + conta.getDigito() + " da agência " + conta.getAgencia().getNome() + " já está associada ao cliente!");
         } else {
-            contasList.add(conta);
+            contas.add(conta);
             System.out.println("A conta foi adicionada com sucesso!");
         }
     }
 
-    //public Conta getContaPorNumeroEAgencia(int numero, Agencia agencia) {
-    public Conta getContaPorNumero(int numero) {
+    public Conta getConta(Agencia agencia, int numero) {
         Conta contaRetorno = null;
 
-        for (Conta conta : contasList) {
-            //if ((conta.getAgencia().equals(agencia)) && (conta.getNumero() == numero)) {
-            if (conta.getNumero() == numero) {
+        for (Conta conta : contas) {
+            if ((conta.getAgencia().equals(conta.getAgencia())) && (conta.getNumero() == numero)) {
                 contaRetorno = conta;
                 break;
             }
@@ -79,31 +78,29 @@ public class Cliente implements Serializable {
      * @param digito
      * @param agencia
      */
-    public void criaConta(boolean criaContaCorrente, int numero, String digito, Agencia agencia) {
-        Conta novaConta = criaContaCorrente ? new ContaCorrente(numero, digito, BigDecimal.ZERO, agencia, Status.ATIVO)
-                : new ContaPoupanca(numero, digito, BigDecimal.ZERO, agencia, Status.ATIVO);
-
-        boolean contaExistente = verificaExistenciaConta(numero);
-
-        if (contaExistente) {
-            System.out.println(" A conta de número " + String.valueOf(numero)
-                    + " , dígito " + digito + " da agência " + agencia.getNome() + " já existe!");
-        } else {
-            adicionaConta(novaConta);
-            System.out.println("A nova conta foi criada com sucesso!");
-        }
-    }
-
+//    public void criaConta(boolean criaContaCorrente, int numero, String digito, Agencia agencia) {
+//        Conta novaConta = criaContaCorrente ? new ContaCorrente(numero, digito, BigDecimal.ZERO, agencia, Status.ATIVO)
+//                : new ContaPoupanca(numero, digito, BigDecimal.ZERO, agencia, Status.ATIVO);
+//
+//        boolean contaExistente = verificaExistenciaConta(numero);
+//
+//        if (contaExistente) {
+//            System.out.println(" A conta de número " + String.valueOf(numero)
+//                    + " , dígito " + digito + " da agência " + agencia.getNome() + " já existe!");
+//        } else {
+//            adicionaConta(novaConta);
+//            System.out.println("A nova conta foi criada com sucesso!");
+//        }
+//    }
     public BigDecimal realizaAcaoDeposito(int numero, Agencia agencia, BigDecimal valorDeposito) {
-        //Conta conta = getContaPorNumeroEAgencia(numero, agencia);
-        Conta conta = getContaPorNumero(numero);
+        Conta conta = getConta(agencia, numero);
 
         return conta != null ? conta.realizaDeposito(valorDeposito) : null;
     }
 
     public BigDecimal realizaAcaoSaque(int numero, Agencia agencia, BigDecimal valorSaque) {
         //Conta conta = getContaPorNumeroEAgencia(numero, agencia);        
-        Conta conta = getContaPorNumero(numero);
+        Conta conta = getConta(agencia, numero);
 
         return conta != null ? conta.realizaSaque(valorSaque) : null;
     }
@@ -117,7 +114,7 @@ public class Cliente implements Serializable {
     }
 
     public List<Conta> getContasList() {
-        return Collections.unmodifiableList(contasList);
+        return Collections.unmodifiableList(new LinkedList<>(contas));
     }
 
     @Override

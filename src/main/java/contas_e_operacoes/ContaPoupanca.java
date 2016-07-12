@@ -6,51 +6,43 @@
 package contas_e_operacoes;
 
 import agencia_banco.Agencia;
-import cliente_conta.Conta;
-import enumerator.Status;
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 /**
  *
  * @author Lukas
  */
-public class ContaPoupanca extends Conta {
+public class ContaPoupanca extends OperacoesConta {
 
     private BigDecimal rendimento = BigDecimal.ZERO;
 
-    public ContaPoupanca(int numero, String digito, BigDecimal saldo, Agencia agencia, Status status) {
-        super(numero, digito, saldo, agencia, status);
+    public ContaPoupanca(int numero, String digito, Agencia agencia) {
+        super(numero, digito, agencia);
     }
 
     @Override
     public BigDecimal realizaDeposito(BigDecimal valor) {
-        Calendar diaAtual = Calendar.getInstance();
 
-        //Efetua o agendamento para o próximo dia útil caso o dia atual seja Sábado ou Domingo
-        if ((diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) || (diaAtual.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
-            realizaAgendamento(valor);
-        } else {
-            this.rendimento = this.rendimento.add(valor.multiply(BigDecimal.valueOf(0.02)));
-            this.saldo = this.saldo.add(valor.multiply(BigDecimal.valueOf(1.02)));
-        }
-        return this.saldo;
+        this.rendimento = this.rendimento.add(valor.multiply(BigDecimal.valueOf(0.02)));
+//        this.saldo = this.saldo.add(valor.multiply(BigDecimal.valueOf(1.02)));
+//        
+//        return this.saldo;
+        return super.realizaDeposito(valor.add(rendimento));
     }
 
-    @Override
-    public BigDecimal realizaSaque(BigDecimal valor) {
-        int comparaSaldoEValor = this.saldo.compareTo(valor);
-
-        if (comparaSaldoEValor == -1) {
-            System.out.println("Não foi possível efetuar o saque! Saldo abaixo do valor de saque desejado. Saldo atual: " + this.retornaSaldoTotal());
-
-            return this.saldo;
-        } else {
-            this.saldo = this.saldo.subtract(valor);
-        }
-        return this.retornaSaldoTotal();
-    }
-
+//    @Override
+//    public BigDecimal realizaSaque(BigDecimal valor) {
+//        int comparaSaldoEValor = this.saldo.compareTo(valor);
+//
+//        if (comparaSaldoEValor == -1) {
+//            System.out.println("Não foi possível efetuar o saque! Saldo abaixo do valor de saque desejado. Saldo atual: " + this.retornaSaldoTotal());
+//
+//            return this.saldo;
+//        } else {
+//            this.saldo = this.saldo.subtract(valor);
+//        }
+//        return this.retornaSaldoTotal();
+//    }
     public BigDecimal getRendimento() {
         return rendimento;
     }
